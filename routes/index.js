@@ -16,7 +16,7 @@ router.get('/paystack', (req, res)=>{
   res.send(verified)
 })
 
-router.post('/multipleFiles', upload.array('files'), (req, res, next) => {
+router.post('/multipleFiles', cors(), upload.array('files'), (req, res, next) => {
   const files = req.files;
   console.log(files[0].filename);
   pdfname = files[0].filename
