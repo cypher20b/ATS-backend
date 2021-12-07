@@ -1,8 +1,21 @@
 var express = require('express');
 var router = express.Router();
+const multer = require('multer');
+const {spawn} = require('child_process');
 var verified;
 let pdfname
 let resdata
+
+const storage = multer.diskStorage({
+  destination: (req, file, callBack) => {
+      callBack(null, 'uploads')
+  },
+  filename: (req, file, callBack) => {
+      callBack(null, `CV_${file.originalname}`)
+  }
+})
+
+const upload = multer({ storage: storage })
 /* GET home page. */
 router.get('/', function(req, res, next) {
   res.render('index', { title: 'Express' });
@@ -16,12 +29,12 @@ router.get('/paystack', (req, res)=>{
   res.send(verified)
 })
 
-router.post('/multipleFiles', cors(), upload.array('files'), (req, res, next) => {
+router.post('/multipleFiles', upload.array('files'), (req, res, next) => {
   const files = req.files;
   console.log(files[0].filename);
   pdfname = files[0].filename
   const  childpython = spawn('python', ['script1.py', `./uploads/${pdfname}`]);
-  childpython.stdout.on('data', (data)=>{
+  childpython.stdout.on('data', (data)=>{ 
     console.log(data.indexOf("Education"));//find first occurance of a word 
     console.log(`${data}`);
     resdata=`${data}`
