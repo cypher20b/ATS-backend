@@ -26,7 +26,7 @@ router.post('/verify',(req, res)=>{
 })
 
 router.get('/paystack', (req, res)=>{
-  res.send(verified)
+  res.json(verified)
 })
 
 router.post('/multipleFiles', upload.array('files'), (req, res, next) => {
