@@ -36,12 +36,16 @@ router.post('/multipleFiles', upload.array('files'), (req, res, next) => {
   pdfname = files[0].filename
   const  childpython = spawn('python', ['script1.py', `./uploads/${pdfname}`]);
   childpython.stdout.on('data', (data)=>{ 
-    console.log(data.indexOf("Education"));//find first occurance of a word 
-//     console.log(`${data}`);
-    resdata=`${data}`
-    res.json(resdata)
-    // res.send('passed sucessfully')
-})
+   console.log(data.indexOf("Education")); //find first occurance of a word
+    processedData.length = data.length;
+    processedData.education=data.match(/ain/gi);
+    processedData.experience=data.includes("world");
+    // console.log(`${data}`);
+    // console.log(res);
+    resdata = `${data}`;
+    res.json(processedData);
+    // res.json('passed sucessfully')
+  });
 
 childpython.stderr.on('data', (data)=>{
     console.log(`${data}`);
