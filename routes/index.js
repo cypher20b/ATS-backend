@@ -23,6 +23,7 @@ router.get('/', function(req, res, next) {
 
 router.post('/verify',(req, res)=>{
   verified = req.body
+  console.log(req);
 })
 
 router.get('/paystack', (req, res)=>{
