@@ -2,7 +2,7 @@ var express = require('express');
 var router = express.Router();
 const multer = require('multer');
 const {spawn} = require('child_process');
-var verified;
+var verified='before';
 let pdfname
 let resdata
 
