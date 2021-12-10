@@ -92,7 +92,7 @@ router.post("/multipleFiles", upload.array("files"), (req, res, next) => {
 
 
 
-router.post("/newmultipleFiles", upload.array("files"), (req, res, next) => {
+router.post("/idleNewmultipleFiles", upload.array("files"), (req, res, next) => {
   const files = req.files;
   console.log(files[0].filename);
   console.log(user.Name);
@@ -108,7 +108,10 @@ router.post("/newmultipleFiles", upload.array("files"), (req, res, next) => {
    res.json('upload failed')
  }
 });
-
+router.get("/newmultipleFiles", (req, res, next) => {
+  res.json('respindein')
+});
+module.exports = router;
 
 router.get("/confirmPay", (req, res, next) => {
   res.json('respindein')
