@@ -108,10 +108,9 @@ router.post("/idleNewmultipleFiles", upload.array("files"), (req, res, next) => 
    res.json('upload failed')
  }
 });
-router.get("/newmultipleFiles", (req, res, next) => {
+router.get('/newmultipleFiles', (req, res, next) => {
   res.json('respindein')
 });
-module.exports = router;
 
 router.get("/confirmPay", (req, res, next) => {
   res.json('respindein')
