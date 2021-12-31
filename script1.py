@@ -12,4 +12,4 @@ for page in pdf.pages:
 #print(json.dumps(text)) #<json version of the parsed pdf>
 print(text) 
 sys.stdout.flush()
-print('python script running cool ', str(sys.argv[1]))
+# print('python script running cool ', str(sys.argv[1]))
