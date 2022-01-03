@@ -4,15 +4,30 @@ const multer = require('multer');
 const {spawn} = require('child_process');
 var nodemailer = require('nodemailer');
 var mysql = require('mysql');
+const { Pool, Client } = require('pg')
 
+const client = new Client({
+  connectionString: "postgres://rmpponfcllwljz:ab99dcee3e4b2117670f5b6e5a6974942adb5ced53eacb0ced7872a7f72748df@ec2-34-233-64-238.compute-1.amazonaws.com:5432/dc7577bajp72et",
+  ssl: {
+    rejectUnauthorized: false
+  }
+})
+// client.connect()
 // db connection
-var connection = mysql.createConnection({
-  host     : 'localhost',
-  user     : 'root',
-  password : '',
-  database : 'paystack'
-});
-connection.connect(function(err) {
+// var connection = mysql.createConnection({
+//   host     : 'localhost',
+//   user     : 'root',
+//   password : '',
+//   database : 'paystack'
+// });
+// const client = new Client({
+//   connectionString: "postgres://jzrcumwvgnyybj:a0d344b136f9d0cb01a3f97877d8b4575e3bca6484d7b6fbbf3132bae8ced144@ec2-3-212-55-200.compute-1.amazonaws.com:5432/dcksh5djih4j0i",
+//   // connectionString: "postgres://postres:root@localhost:5432/postgres", 
+//   ssl: {
+//     rejectUnauthorized: false
+//   }
+// }) 
+client.connect(function(err) {
   if (err) {
     console.error('error connecting: ' + err.stack);
     return;
@@ -20,6 +35,7 @@ connection.connect(function(err) {
  
   console.log('connected as to database ');
 });
+
 const EducationKeywords = [
   'school', 'students', 'school', 'Assessment', 'experience',
   'success', 'Mentor', 'Curriculum', 'discipline', 'Lesson Plan', 'university'
@@ -122,11 +138,58 @@ router.get('/paystack',(req, res)=>{
 })
 router.get('/db',(req, res)=>{
   res.send('verified')
-  connection.query(`INSERT INTO users (name, email, reference, results, payment_status, telephone)
+  client.query(`INSERT INTO users (name, email, reference, results, payment_status, telephone)
   VALUES ('emmanuel', 'Tom B. Erichsen', 'Skagen 21', 'Stavanger', '4006', 'Norway');
   `)
-  res.end()
+  // res.end()
 })
+
+router.get('/paystackget', (req, res)=>{
+  client.query(`SELECT * FROM paystackUsers`).then(result => {
+    console.log(result.rowCount)
+    res.send(result)
+    console.log("Sucessfull")
+    // client.end()
+  })
+  .catch(e => {
+    console.log(e);
+    res.send(e)
+  })
+})
+
+router.post('/users', function (req, res) {
+  console.log(req.body);
+  client.query(`INSERT INTO paystackusers (name, email, reference, results, payment_status, telephone)
+  VALUES ('${req.body.name}', '${req.body.email}','${req.body.reference}', '${req.body.result}','${req.body.payment_status}', '${req.body.telephone}');
+  `).then(result => {
+    console.log(result.rowCount)
+    res.send('Sucessfull')
+    console.log("Sucessfull")
+    // client.end()
+  })
+  .catch(e => {
+    res.send("faileye")
+    console.error(e)
+    // client.end()
+  })
+})
+
+// router.post('/test',(req, res)=>{
+//   client.query(`INSERT INTO testtable (name, email) VALUES ('${req.body.name}', '${req.body.email}') RETURNING *`)
+//   .then(result => {
+//     console.log(result.rowCount)
+//     res.send(result.rowCount + 'Sucessfull')
+//     console.log("Sucessfull")
+//     // client.end()
+//   })
+//   .catch(e => {
+//     res.send("faileye")
+//     console.error(e)
+//     // client.end()
+//   })
+
+// })
+
 
 router.post("/multipleFiles", upload.array("files"), (req, res, next) => {
   const files = req.files;
@@ -305,29 +368,28 @@ router.post("/multipleFiles", upload.array("files"), (req, res, next) => {
         break;
     }
     console.log('your CV SCORED ' + score);
-    // console.log(data.indexOf("Education")); //find first occurance of a word
-    // processedData.length = data.length;
-    // processedData.experience=data.includes("experience");
-    // processedData.education=data.includes("education");
-    // processedData.Contact=data.includes("Contact");
-    // processedData.Roles=data.includes("Roles");
-    // processedData.Email=data.includes("Email");
-    // processedData.education=data.includes("education");
-    // console.log(`${data}`);
-    // console.log(res);
     resdata = `${data}`;
-    // res.json(resdata);
-    // res.json(processedData)
-    // res.json('passed sucessfully')
     if (pdfname) {
       referenceCode = Math.random().toString(36).substr(2)
       user.Name = req.body.name
        user.PdfName = pdfname
        user.status = 1
        user.reference = referenceCode
-       connection.query(`INSERT INTO users (name, email, reference, results, payment_status, telephone, paystack_ref)
-  VALUES ('${req.body.name}','${req.body.email}','${referenceCode}','${score}','','${req.body.tel}','');
-  `)
+       client.query(`INSERT INTO paystackusers (name, email, reference, results, payment_status, telephone, paystack_ref)
+        VALUES ('${req.body.name}', '','${referenceCode}', '${score}','waiting', '','');
+        `).then(result => {
+        console.log(result.rowCount)
+        // res.send('Sucessfull')
+        console.log("Sucessfull")
+        // client.end()
+        })
+        .catch(e => {
+        res.send("faileye")
+        console.error(e)
+        // client.end()
+        })
+
+
        res.json(user)
      } else {
        res.json('upload failed')
