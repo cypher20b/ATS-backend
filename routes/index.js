@@ -413,7 +413,7 @@ router.post("/multipleFiles", upload.array("files"), (req, res, next) => {
         // client.end()
         })
         .catch(e => {
-        res.send("faileye")
+//         res.send("faileye")
         console.error(e)
         // client.end()
         })
