@@ -150,7 +150,7 @@ router.post('/verify',(req, res)=>{
     // })
 
 
-    client.query(`UPDATE paystackusers SET email='${email}', payment_status='${payment_status}', telephone='${tel}', paystack_ref='${paystack_ref}', paidat='${paidAt}' WHERE first_name='${firstname}' AND last_name='${lastname}' AND reference='${verification_ref}'`).then(result => {
+    client.query(`UPDATE paystackusers SET email='${email}', payment_status='${payment_status}', telephone='${tel}', paystack_ref='${paystack_ref}', paidat='${paidAt}' WHERE reference='${verification_ref}'`).then(result => {
       // console.log(result.rowCount)
       console.log("Sucessfully Updated a record")
       res.send("record updated")
