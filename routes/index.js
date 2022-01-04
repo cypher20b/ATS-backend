@@ -137,7 +137,7 @@ router.post('/verify',(req, res)=>{
   const firstname = req.body.data.customer.first_name
   const lastname = req.body.data.customer.last_name
   client.query(`SELECT first_name, last_name, reference FROM paystackUsers WHERE first_name=${firstname} AND last_name=${lastname} AND reference=${verification_ref}`).then(result => {
-    client.query(`UPDATE paystackusers SET email='${email}', payment_status='${payment_status}', telephone='${tel}', paystack_ref='${paystack_ref}', paidAt='${paidAt}')
+    client.query(`UPDATE paystackusers SET email='${email}', payment_status='${payment_status}', telephone='${tel}', paystack_ref='${paystack_ref}', paidat='${paidAt}')
     VALUES ('${req.body.name}', '','${referenceCode}', '${score}','waiting', '','');
     `).then(result => {
     // console.log(result.rowCount)
@@ -188,7 +188,7 @@ router.get('/paystackget', (req, res)=>{
 
 router.post('/users', function (req, res) {
   console.log(req.body);
-  client.query(`INSERT INTO paystackusers (first_name, last_name, email, reference, results, payment_status, telephone, paystack_ref, paidAt)
+  client.query(`INSERT INTO paystackusers (first_name, last_name, email, reference, results, payment_status, telephone, paystack_ref, paidat)
   VALUES ('${req.body.firstname}','${req.body.lastname}', '','${referenceCode}', '${score}','waiting', '','', '');
   `).then(result => {
     console.log(result.rowCount)
@@ -404,7 +404,7 @@ router.post("/multipleFiles", upload.array("files"), (req, res, next) => {
        user.PdfName = pdfname
        user.status = 1
        user.reference = referenceCode
-       client.query(`INSERT INTO paystackusers (first_name, last_name, email, reference, results, payment_status, telephone, paystack_ref, paidAt)
+       client.query(`INSERT INTO paystackusers (first_name, last_name, email, reference, results, payment_status, telephone, paystack_ref, paidat)
         VALUES ('${req.body.firstname}','${req.body.lastname}', '','${referenceCode}', '${score}','waiting', '','', '');
         `).then(result => {
         console.log(result.rowCount)
@@ -413,7 +413,7 @@ router.post("/multipleFiles", upload.array("files"), (req, res, next) => {
         // client.end()
         })
         .catch(e => {
-//         res.send("faileye")
+        // res.send("faileye")
         console.error(e)
         // client.end()
         })
