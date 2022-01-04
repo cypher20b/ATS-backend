@@ -127,48 +127,25 @@ router.get('/', function(req, res, next) {
 });
 
 router.post('/verify',(req, res)=>{
-  verified = req.body
-  const email= req.body.data.customer.email
-  const payment_status= req.body.data.status
-  const tel= req.body.data.customer.phone
-  const paystack_ref= req.body.data.reference 
-  const verification_ref = req.body.data.metadata.custom_fields[0].value
-  const paidAt = req.body.data.paidAt
-  const firstname = req.body.data.customer.first_name
-  const lastname = req.body.data.customer.last_name
-  client.query(`SELECT first_name, last_name, reference FROM paystackUsers WHERE first_name=${firstname} AND last_name=${lastname} AND reference=${verification_ref}`).then(result => {
-    // client.query(`UPDATE paystackusers SET email='${email}', payment_status='${payment_status}', telephone='${tel}', paystack_ref='${paystack_ref}', paidat='${paidAt}')
-    // VALUES ('${req.body.name}', '','${referenceCode}', '${score}','waiting', '','');
-    // `).then(result => {
-    // // console.log(result.rowCount)
-    // console.log("Sucessfully Updated a record")
-    // })
-    // .catch(e => {
-    // res.send("updating a record in database failed")
-    // console.error(e)
-    // // client.end()
-    // })
-
-
-    client.query(`UPDATE paystackusers SET email='${email}', payment_status='${payment_status}', telephone='${tel}', paystack_ref='${paystack_ref}', paidat='${paidAt}' WHERE reference='${verification_ref}'`).then(result => {
-      // console.log(result.rowCount)
-      console.log("Sucessfully Updated a record")
-      res.send("record updated")
-      })
-      .catch(e => {
-      res.send("updating a record in database failed")
-      console.error(e)
-      // client.end()
-      })
-
-
-
-  })
-  .catch(e => {
-    console.log(e);
-    res.send(e)
-  })
-
+  // verified = req.body
+  // const email= req.body.data.customer.email
+  // const payment_status= req.body.data.status
+  // const tel= req.body.data.customer.phone
+  // const paystack_ref= req.body.data.reference 
+  // const verification_ref = req.body.data.metadata.custom_fields.value
+  // const paidAt = req.body.data.paidAt
+  // const firstname = req.body.data.customer.first_name
+  // const lastname = req.body.data.customer.last_name
+  client.query(`UPDATE paystackusers SET email='${ req.body.data.customer.email}', payment_status='${ req.body.data.status}', telephone='${req.body.data.customer.phone}', paystack_ref='${req.body.data.reference}', paidat='${req.body.data.paidAt}' WHERE reference='${req.body.data.metadata.custom_fields[0].value}' AND first_name='${req.body.data.customer.first_name}'`).then(result => {
+    // console.log(result.rowCount)
+    console.log("Sucessfully Updated a record")
+    res.send("record updated")
+    })
+    .catch(e => {
+    res.send("updating a record in database failed")
+    console.error(e)
+    // client.end()
+    })
 
   
 })
@@ -180,8 +157,16 @@ router.get('/paystack',(req, res)=>{
   // res.end()
 })
 router.post('/db',(req, res)=>{
- client.query(`UPDATE paystackusers SET email='${req.body.email}', payment_status='${req.body.payment_status}', telephone='${req.body.telephone}', paystack_ref='${req.body.paystack_ref}', paidat='${req.body.paidAt}' WHERE reference='${req.body.reference}'`).then(result => {
+  client.query(`UPDATE paystackusers SET email='${ req.body.data.customer.email}', payment_status='${ req.body.data.status}', telephone='${req.body.data.customer.phone}', paystack_ref='${req.body.data.reference}', paidat='${req.body.data.paidAt}' WHERE reference='${req.body.data.metadata.custom_fields[0].value}'`).then(result => {
     // console.log(result.rowCount)
+    console.log(`${req.body.data.customer.email}`);
+    console.log(`${req.body.data.status}`);
+    console.log(`${req.body.data.customer.phone}`);
+    console.log(`${req.body.data.reference}`);
+    console.log(`${req.body.data.paidAt}`);
+    console.log(`${req.body.data.metadata.custom_fields[0].value}`);
+    // console.log(`${req.body.data}`);
+    // console.log(`${req.body.data}`);
     console.log("Sucessfully Updated a record")
     res.send("record updated")
     })
