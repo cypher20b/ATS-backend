@@ -128,6 +128,35 @@ router.get('/', function(req, res, next) {
 
 router.post('/verify',(req, res)=>{
   verified = req.body
+  const email= req.body.data.customer.email
+  const payment_status= req.body.data.status
+  const tel= req.body.data.customer.phone
+  const paystack_ref= req.body.data.reference 
+  const verification_ref = req.body.data.metadata.custom_fields.value
+  const paidAt = req.body.data.paidAt
+  const firstname = req.body.data.customer.first_name
+  const lastname = req.body.data.customer.last_name
+  client.query(`SELECT first_name, last_name, reference FROM paystackUsers WHERE first_name=${firstname} AND last_name=${lastname} AND reference=${verification_ref}`).then(result => {
+    client.query(`UPDATE paystackusers SET email='${email}', payment_status='${payment_status}', telephone='${tel}', paystack_ref='${paystack_ref}', paidAt='${paidAt}')
+    VALUES ('${req.body.name}', '','${referenceCode}', '${score}','waiting', '','');
+    `).then(result => {
+    // console.log(result.rowCount)
+    console.log("Sucessfully Updated a record")
+    })
+    .catch(e => {
+    res.send("updating a record in database failed")
+    console.error(e)
+    // client.end()
+    })
+
+  })
+  .catch(e => {
+    console.log(e);
+    res.send(e)
+  })
+
+
+  
 })
 
 router.get('/paystack',(req, res)=>{
@@ -159,8 +188,8 @@ router.get('/paystackget', (req, res)=>{
 
 router.post('/users', function (req, res) {
   console.log(req.body);
-  client.query(`INSERT INTO paystackusers (name, email, reference, results, payment_status, telephone)
-  VALUES ('${req.body.name}', '${req.body.email}','${req.body.reference}', '${req.body.result}','${req.body.payment_status}', '${req.body.telephone}');
+  client.query(`INSERT INTO paystackusers (first_name, last_name, email, reference, results, payment_status, telephone, paystack_ref, paidAt)
+  VALUES ('${req.body.firstname}','${req.body.lastname}', '','${referenceCode}', '${score}','waiting', '','', '');
   `).then(result => {
     console.log(result.rowCount)
     res.send('Sucessfull')
@@ -375,8 +404,8 @@ router.post("/multipleFiles", upload.array("files"), (req, res, next) => {
        user.PdfName = pdfname
        user.status = 1
        user.reference = referenceCode
-       client.query(`INSERT INTO paystackusers (name, email, reference, results, payment_status, telephone, paystack_ref)
-        VALUES ('${req.body.name}', '','${referenceCode}', '${score}','waiting', '','');
+       client.query(`INSERT INTO paystackusers (first_name, last_name, email, reference, results, payment_status, telephone, paystack_ref, paidAt)
+        VALUES ('${req.body.firstname}','${req.body.lastname}', '','${referenceCode}', '${score}','waiting', '','', '');
         `).then(result => {
         console.log(result.rowCount)
         // res.send('Sucessfull')
