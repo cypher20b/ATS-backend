@@ -137,16 +137,31 @@ router.post('/verify',(req, res)=>{
   const firstname = req.body.data.customer.first_name
   const lastname = req.body.data.customer.last_name
   client.query(`SELECT first_name, last_name, reference FROM paystackUsers WHERE first_name=${firstname} AND last_name=${lastname} AND reference=${verification_ref}`).then(result => {
-    client.query(`UPDATE paystackusers SET email='${email}', payment_status='${payment_status}', telephone='${tel}', paystack_ref='${paystack_ref}', paidat='${paidAt}' WHERE reference='${verification_ref}')
-    `).then(result => {
-    // console.log(result.rowCount)
-    console.log("Sucessfully Updated a record")
-    })
-    .catch(e => {
-    res.send("updating a record in database failed")
-    console.error(e)
-    // client.end()
-    })
+    // client.query(`UPDATE paystackusers SET email='${email}', payment_status='${payment_status}', telephone='${tel}', paystack_ref='${paystack_ref}', paidat='${paidAt}')
+    // VALUES ('${req.body.name}', '','${referenceCode}', '${score}','waiting', '','');
+    // `).then(result => {
+    // // console.log(result.rowCount)
+    // console.log("Sucessfully Updated a record")
+    // })
+    // .catch(e => {
+    // res.send("updating a record in database failed")
+    // console.error(e)
+    // // client.end()
+    // })
+
+
+    client.query(`UPDATE paystackusers SET email='${email}', payment_status='${payment_status}', telephone='${tel}', paystack_ref='${paystack_ref}', paidat='${paidAt}' WHERE first_name='${firstname}' AND last_name='${lastname}' AND reference='${verification_ref}'`).then(result => {
+      // console.log(result.rowCount)
+      console.log("Sucessfully Updated a record")
+      res.send("record updated")
+      })
+      .catch(e => {
+      res.send("updating a record in database failed")
+      console.error(e)
+      // client.end()
+      })
+
+
 
   })
   .catch(e => {
@@ -164,12 +179,17 @@ router.get('/paystack',(req, res)=>{
  
   // res.end()
 })
-router.get('/db',(req, res)=>{
-  res.send('verified')
-  client.query(`INSERT INTO users (name, email, reference, results, payment_status, telephone)
-  VALUES ('emmanuel', 'Tom B. Erichsen', 'Skagen 21', 'Stavanger', '4006', 'Norway');
-  `)
-  // res.end()
+router.post('/db',(req, res)=>{
+ client.query(`UPDATE paystackusers SET email='${req.body.email}', payment_status='${req.body.payment_status}', telephone='${req.body.telephone}', paystack_ref='${req.body.paystack_ref}', paidat='${req.body.paidAt}' WHERE reference='${req.body.reference}'`).then(result => {
+    // console.log(result.rowCount)
+    console.log("Sucessfully Updated a record")
+    res.send("record updated")
+    })
+    .catch(e => {
+    res.send("updating a record in database failed")
+    console.error(e)
+    // client.end()
+    })
 })
 
 router.get('/paystackget', (req, res)=>{
