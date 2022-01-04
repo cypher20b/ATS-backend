@@ -137,8 +137,7 @@ router.post('/verify',(req, res)=>{
   const firstname = req.body.data.customer.first_name
   const lastname = req.body.data.customer.last_name
   client.query(`SELECT first_name, last_name, reference FROM paystackUsers WHERE first_name=${firstname} AND last_name=${lastname} AND reference=${verification_ref}`).then(result => {
-    client.query(`UPDATE paystackusers SET email='${email}', payment_status='${payment_status}', telephone='${tel}', paystack_ref='${paystack_ref}', paidat='${paidAt}')
-    VALUES ('${req.body.name}', '','${referenceCode}', '${score}','waiting', '','');
+    client.query(`UPDATE paystackusers SET email='${email}', payment_status='${payment_status}', telephone='${tel}', paystack_ref='${paystack_ref}', paidat='${paidAt}' WHERE reference='${verification_ref}')
     `).then(result => {
     // console.log(result.rowCount)
     console.log("Sucessfully Updated a record")
