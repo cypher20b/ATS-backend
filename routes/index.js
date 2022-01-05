@@ -148,7 +148,7 @@ router.post('/verify',(req, res)=>{
       from: 'nuel.emma20@gmail.com',
       to: `${req.body.data.customer.email}`,
       subject: 'DPSA CV Results',
-      text: `Thank You ${req.body.data.customer.first_name}, for using our services. Your CV scored ${result.rowCount.result}`
+      text: `Thank You ${req.body.data.customer.first_name}, for using our services. Your CV scored ${result.rows[0].results}`
     };
     
     transporter.sendMail(mailOptions, function(error, info){
