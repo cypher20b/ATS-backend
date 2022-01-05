@@ -128,18 +128,37 @@ router.get('/', function(req, res, next) {
 
 router.post('/verify',(req, res)=>{
   // verified = req.body
-  // const email= req.body.data.customer.email
-  // const payment_status= req.body.data.status
-  // const tel= req.body.data.customer.phone
-  // const paystack_ref= req.body.data.reference 
-  // const verification_ref = req.body.data.metadata.custom_fields.value
-  // const paidAt = req.body.data.paidAt
-  // const firstname = req.body.data.customer.first_name
-  // const lastname = req.body.data.customer.last_name
-  client.query(`UPDATE paystackusers SET email='${ req.body.data.customer.email}', payment_status='${ req.body.data.status}', telephone='${req.body.data.customer.phone}', paystack_ref='${req.body.data.reference}', paidat='${req.body.data.paidAt}' WHERE reference='${req.body.data.metadata.custom_fields[0].value}' AND first_name='${req.body.data.customer.first_name}'`).then(result => {
-    // console.log(result.rowCount)
+  
+  client.query(`UPDATE paystackusers SET email='${ req.body.data.customer.email}', payment_status='${ req.body.data.status}', telephone='${req.body.data.customer.phone}', paystack_ref='${req.body.data.reference}', paidat='${req.body.data.paidAt}' WHERE reference='${req.body.data.metadata.custom_fields[0].value}' AND first_name='${req.body.data.customer.first_name}' RETURNING *`).then(result => {
+    // console.log(result)
     console.log("Sucessfully Updated a record")
     res.send("record updated")
+
+
+    //sending email
+    var transporter = nodemailer.createTransport({
+      service: 'gmail',
+      auth: {
+        user: 'nuel.emma20@gmail.com',
+        pass: 'myfpknfqcidmwfvq'
+      }
+    });
+    
+    var mailOptions = {
+      from: 'nuel.emma20@gmail.com',
+      to: `${req.body.data.customer.email}`,
+      subject: 'DPSA CV Results',
+      text: `Thank You ${req.body.data.customer.first_name}, for using our services. Your CV scored ${result.rowCount.result}`
+    };
+    
+    transporter.sendMail(mailOptions, function(error, info){
+      if (error) {
+        console.log(error);
+      } else {
+        console.log('Email sent: ' + info.response);
+      }
+    });
+    
     })
     .catch(e => {
     res.send("updating a record in database failed")
