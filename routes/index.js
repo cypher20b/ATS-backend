@@ -127,7 +127,7 @@ router.get('/', function(req, res, next) {
 });
 
 router.post('/verify',(req, res)=>{
-  // verified = req.body
+  verified = req.body
   
   client.query(`UPDATE paystackusers SET email='${ req.body.data.customer.email}', payment_status='${ req.body.data.status}', telephone='${req.body.data.customer.phone}', paystack_ref='${req.body.data.reference}', paidat='${req.body.data.paidAt}' WHERE reference='${req.body.data.metadata.custom_fields[0].value}' AND first_name='${req.body.data.customer.first_name}' RETURNING *`).then(result => {
     // console.log(result)
