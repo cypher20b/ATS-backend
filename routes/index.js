@@ -6,20 +6,20 @@ var nodemailer = require('nodemailer');
 var mysql = require('mysql');
 const { Pool, Client } = require('pg')
 
-const client = new Client({
-  connectionString: "postgres://rmpponfcllwljz:ab99dcee3e4b2117670f5b6e5a6974942adb5ced53eacb0ced7872a7f72748df@ec2-34-233-64-238.compute-1.amazonaws.com:5432/dc7577bajp72et",
-  ssl: {
-    rejectUnauthorized: false
-  }
-})
+// const client = new Client({
+//   connectionString: "postgres://rmpponfcllwljz:ab99dcee3e4b2117670f5b6e5a6974942adb5ced53eacb0ced7872a7f72748df@ec2-34-233-64-238.compute-1.amazonaws.com:5432/dc7577bajp72et",
+//   ssl: {
+//     rejectUnauthorized: false
+//   }
+// })
 // client.connect()
 // db connection
-// var connection = mysql.createConnection({
-//   host     : 'localhost',
-//   user     : 'root',
-//   password : '',
-//   database : 'paystack'
-// });
+var client =  new Client({
+  host     : 'localhost',
+  user     : 'eaweb_atsroot',
+  password : 'Amalitech in 2024',
+  database : 'eaweb_atsdb'
+});
 // const client = new Client({
 //   connectionString: "postgres://jzrcumwvgnyybj:a0d344b136f9d0cb01a3f97877d8b4575e3bca6484d7b6fbbf3132bae8ced144@ec2-3-212-55-200.compute-1.amazonaws.com:5432/dcksh5djih4j0i",
 //   // connectionString: "postgres://postres:root@localhost:5432/postgres", 
