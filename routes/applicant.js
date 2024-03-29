@@ -16,9 +16,9 @@ const storage = multer.diskStorage({
 const upload = multer({ storage: storage })
 const client =mysql.createConnection({
   host     : 'localhost',
-  user     : 'root',
-  password : '',
-  database : 'eaweb_atsdb'
+  user     : 'verony_ats',
+  password : 'Amalitech in 2024',
+  database : 'verony_ATSDB'
 });
 
 router.get('/', function(req, res, next) {

@@ -8,9 +8,9 @@ const mysql = require('mysql2');
 
 const client =mysql.createConnection({
   host     : 'localhost',
-  user     : 'root',
-  password : '',
-  database : 'eaweb_atsdb'
+  user     : 'verony_ats',
+  password : 'Amalitech in 2024',
+  database : 'verony_ATSDB'
 });
 client.connect(function(err) {
   if (err) {
