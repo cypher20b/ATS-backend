@@ -14,6 +14,7 @@ CREATE TABLE Recruiters (
     FirstName VARCHAR(255) NOT NULL,
     LastName VARCHAR(255) NOT NULL,
     Email VARCHAR(255) UNIQUE,
+    Password VARCHAR(255),
     Designation VARCHAR(255),
     Specialty VARCHAR(255),
     Phone VARCHAR(20)
@@ -37,15 +38,7 @@ CREATE TABLE JobPostings (
     IsActive BOOLEAN DEFAULT TRUE
 );
 
-CREATE TABLE Applications (
-    ApplicationID INT AUTO_INCREMENT PRIMARY KEY,
-    JobID INT,
-    ApplicantID INT,
-    ApplicationDate DATE,
-    Status ENUM('Submitted', 'Under Review', 'Rejected', 'Shortlisted', 'Hired'),
-    FOREIGN KEY (JobID) REFERENCES JobPostings(JobID),
-    FOREIGN KEY (ApplicantID) REFERENCES Applicants(ApplicantID)
-);
+
 
 CREATE TABLE JobRecruiters (
     JobID INT,
@@ -55,11 +48,27 @@ CREATE TABLE JobRecruiters (
     PRIMARY KEY (JobID, RecruiterID)
 );
 
-CREATE TABLE RecruitmentProcess (
-    ProcessID INT AUTO_INCREMENT PRIMARY KEY,
+CREATE TABLE Emails (
+    EmailID INT AUTO_INCREMENT PRIMARY KEY,
     JobID INT,
-    Stage VARCHAR(100),
     RecruiterID INT,
-    FOREIGN KEY (JobID) REFERENCES JobPostings(JobID),
-    FOREIGN KEY (RecruiterID) REFERENCES Recruiters(RecruiterID)
+    ApplicantID INT,
+    Subject VARCHAR(255),
+    Text TEXT,
+    FOREIGN KEY (JobID) REFERENCES jobpostings(JobID),
+    FOREIGN KEY (RecruiterID) REFERENCES jobpostings(JobID),
+    FOREIGN KEY (ApplicantID) REFERENCES applicants(ApplicantID)
 );
+
+CREATE TABLE Applications (
+    ApplicationID INT AUTO_INCREMENT PRIMARY KEY,
+    JobID INT UNIQUE,
+    ApplicantID INT UNIQUE,
+    ApplicationDate DATE,
+    Email INT,
+    Status ENUM('Submitted', 'Under Review', 'Rejected', 'Shortlisted', 'Hired'),
+    FOREIGN KEY (JobID) REFERENCES jobpostings(JobID),
+    FOREIGN KEY (Email) REFERENCES emails(EmailID),
+    FOREIGN KEY (ApplicantID) REFERENCES applicants(ApplicantID)
+);
+
