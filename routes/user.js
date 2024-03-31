@@ -1,9 +1,9 @@
 
 const multer = require('multer');
-var express = require('express');
-var router = express.Router();
+const express = require('express');
+const router = express.Router();
 const {spawn} = require('child_process');
-var nodemailer = require('nodemailer');
+const nodemailer = require('nodemailer');
 const mysql = require('mysql2');
 
 const client =mysql.createConnection({
@@ -96,6 +96,51 @@ router.post('/admin/register', function (req, res) {
   );
 });
 
+router.post('/admin/login', function (req, res) {
+  client.query(
+    `SELECT * FROM Recruiters `,
+    (err, result) => {
+      if (err) {
+        res.status(500).json({
+          code: "FAILED",
+          message: 'Error occurred while fetching data from the database',
+          error: err
+        });
+      } else {
+        if (result && typeof result === 'object' && result.length > 0) {
+          const userEntry = [...result.entries()].find(([index, user]) => user.Email === req.body.email);
+          
+          if (userEntry) {
+              const [index, user] = userEntry;
+              if (user.Password === req.body.password) {
+                  res.status(200).json({
+                      code: "SUCCESS",
+                      message: "You have successfully logged in.",
+                      data: user
+                  });
+                  return;
+              } else {
+                  res.status(401).json({
+                      code: "UNAUTHORIZED ACCESS",
+                      message: "Incorrect password",
+                      data: ""
+                  });
+                  return;
+              }
+          } else {
+              res.status(404).json({
+                  code: "USER NOT FOUND",
+                  message: "Unable to authenticate. Please check your credentials.",
+                  data: ""
+              });
+              return;
+          }
+      }
+      }
+    }
+  );
+});
+
 router.post('/admin/single-job-application', function (req, res) {
   client.query(
     `REPLACE INTO applications (JobID, ApplicantID, ApplicationDate, Status)
@@ -174,7 +219,7 @@ router.post('/admin/job-recruiters', function (req, res) {
 
 
 router.post('/admin/send-email', function (req, res) {
-  var transporter = nodemailer.createTransport({
+  const transporter = nodemailer.createTransport({
     service: 'gmail',
     auth: {
       user: 'nuel.emma20@gmail.com',
@@ -194,7 +239,7 @@ router.post('/admin/send-email', function (req, res) {
               });
             } else {
               
-              var mailOptions = {
+              const mailOptions = {
                 from: 'nuel.emma20@gmail.com',
                 to: results[0].Email,
                 subject: req.body.Subject,
@@ -271,7 +316,7 @@ const Generalkeywords = [
   'excel',  'soft skills',  'achieve',  'PROFESSIONAL EXPERIENCE',  'SKILLS AND ACCOMPLISHMENTS',
   'WORK EXPERIENCE', 'JOB TITLE ',  'linkedin.com',  'Management']
 let score =0;
-var verified='';
+const verified='';
 let pdfname=''
 let resdata
 let user = {
@@ -318,7 +363,7 @@ router.post('/verify',(req, res)=>{
 
 
     //sending email
-    var transporter = nodemailer.createTransport({
+    const transporter = nodemailer.createTransport({
       service: 'gmail',
       auth: {
         user: 'nuel.emma20@gmail.com',
@@ -326,7 +371,7 @@ router.post('/verify',(req, res)=>{
       }
     });
     
-    var mailOptions = {
+    const mailOptions = {
       from: 'nuel.emma20@gmail.com',
       to: `${req.body.data.customer.email}`,
       subject: 'DPSA CV Results',
@@ -662,7 +707,7 @@ router.post("/newmultipleFiles", upload.array("files"), (req, res, next) => {
 router.get('/confirmPay', (req, res, next) => {
   console.log(req.body);
 
-  var transporter = nodemailer.createTransport({
+  const transporter = nodemailer.createTransport({
     service: 'gmail',
     auth: {
       user: 'nuel.emma20@gmail.com',
@@ -670,7 +715,7 @@ router.get('/confirmPay', (req, res, next) => {
     }
   });
   
-  var mailOptions = {
+  const mailOptions = {
     from: 'nuel.emma20@gmail.com',
     to: 'prisc.osei20@gmail.com',
     subject: 'Sending Email using Node.js',
@@ -695,7 +740,7 @@ router.get('/confirmPay', (req, res, next) => {
 
 // 
 // Email sending
-// var transporter = nodemailer.createTransport({
+// const transporter = nodemailer.createTransport({
 //   service: 'gmail',
 //   auth: {
 //     user: 'nuel.emma20@gmail.com',
@@ -703,7 +748,7 @@ router.get('/confirmPay', (req, res, next) => {
 //   }
 // });
 
-// var mailOptions = {
+// const mailOptions = {
 //   from: 'nuel.emma20@gmail.com',
 //   to: 'prisc.osei20@gmail.com',
 //   subject: 'Sending Email using Node.js',
