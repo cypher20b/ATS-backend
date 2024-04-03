@@ -337,7 +337,7 @@ router.post('/admin/send-email', function (req, res) {
                 from: '"The ATS Team" <nuel.emma20@gmail.com>',
                 to: results[0].Email,
                 subject: req.body.Subject,
-                text:req.body.Text
+                html:`${req.body.Text}`
               };
               transporter.sendMail(mailOptions, function(error, info){
                 if (error) {
