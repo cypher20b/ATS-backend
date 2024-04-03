@@ -11,6 +11,7 @@ const client =mysql.createConnection({
   user     : 'verony_ats',
   password : 'Amalitech in 2024',
   database : 'verony_ATSDB'
+
 });
 client.connect(function(err) {
   if (err) {
@@ -58,6 +59,56 @@ router.post('/admin/post-job', function (req, res) {
   )
 })
 
+router.patch('/admin/post-job/:id', function (req, res) {
+  client.query(`UPDATE jobpostings
+      SET Title = '${req.body.Title}',
+      Description = '${req.body.Description}',
+      Company = '${req.body.Company}',
+      Location = '${req.body.Location}',
+      Category = '${req.body.Category}',
+      EmploymentType = '${req.body.EmploymentType}',
+      Salary = '${req.body.Salary}',
+      Requirements = '${req.body.Requirements}',
+      Responsibilities = '${req.body.Responsibilities}',
+      PostedDate = '${req.body.PostedDate}',
+      ExpiryDate = '${req.body.ExpiryDate}',
+      ContactEmail = '${req.body.ContactEmail}',
+      ContactPhone = '${req.body.ContactPhone}',
+      IsActive = '${req.body.IsActive}'
+      WHERE JobID = ${req.params.id}`,
+          (err, result) => {
+            if (err) {
+              res.status(500).json({
+                code: 500,
+                message: 'Error occurred while inserting data into the database',
+                error: err.message
+              });
+            } else {
+              console.log(result.insertId)
+              const insertedId = result.insertId; // Get the ID of the inserted row
+              client.query(
+                `SELECT * FROM jobpostings WHERE JobID = ${req.params.id}`,
+                (err, results) => {
+                  if (err) {
+                    res.status(500).json({
+                      code: 500,
+                      message: 'Error occurred while fetching inserted data',
+                      error: err.message
+                    });
+                  } else {
+                    res.status(200).json({
+                      code: 200,
+                      message: 'Data inserted successfully',
+                      data: results[0] // Return the inserted data
+                    });
+                  }
+                }
+              );
+            }
+          }
+  )
+})
+
 router.post('/admin/register', function (req, res) {
   client.query(
     `INSERT INTO Recruiters (FirstName, LastName, Email, Password, Designation, Specialty, Phone)
@@ -75,6 +126,51 @@ router.post('/admin/register', function (req, res) {
         const insertedId = result.insertId; // Get the ID of the inserted row
         client.query(
           `SELECT * FROM Recruiters WHERE RecruiterID = ${result.insertId}`,
+          (err, results) => {
+            if (err) {
+              res.status(500).json({
+                code: 500,
+                message: 'Error occurred while fetching inserted data',
+                error: err.message
+              });
+            } else {
+              res.status(200).json({
+                code: 200,
+                message: 'Data inserted successfully',
+                data: results[0] // Return the inserted data
+              });
+            }
+          }
+        );
+      }
+    }
+  );
+});
+
+router.patch('/admin/recruiter/:id', function (req, res) {
+  client.query(
+    `UPDATE Recruiters
+    SET FirstName = ?,
+        LastName = ?,
+        Email = ?,
+        Password = ?,
+        Designation = ?,
+        Specialty = ?,
+        Phone = ?
+    WHERE RecruiterID = ${req.params.id}`,
+    [req.body.firstName, req.body.lastName, req.body.email, req.body.password, req.body.designation, req.body.specialty, req.body.phone],
+    (err, result) => {
+      if (err) {
+        res.status(500).json({
+          code: 500,
+          message: 'Error occurred while inserting data into the database',
+          error: err.message
+        });
+      } else {
+        console.log(result.insertId)
+        const insertedId = result.insertId; // Get the ID of the inserted row
+        client.query(
+          `SELECT * FROM Recruiters WHERE RecruiterID = ${req.params.id}`,
           (err, results) => {
             if (err) {
               res.status(500).json({
@@ -217,13 +313,12 @@ router.post('/admin/job-recruiters', function (req, res) {
   );
 });
 
-
 router.post('/admin/send-email', function (req, res) {
   const transporter = nodemailer.createTransport({
     service: 'gmail',
     auth: {
       user: 'nuel.emma20@gmail.com',
-      pass: 'myfpknfqcidmwfvq'
+      pass: 'tsvy fwkb pyzn xtqi'
     }
   });
   
@@ -238,12 +333,11 @@ router.post('/admin/send-email', function (req, res) {
                 error: err.message
               });
             } else {
-              
               const mailOptions = {
-                from: 'nuel.emma20@gmail.com',
+                from: '"The ATS Team" <nuel.emma20@gmail.com>',
                 to: results[0].Email,
                 subject: req.body.Subject,
-                text: req.body.Text
+                text:req.body.Text
               };
               transporter.sendMail(mailOptions, function(error, info){
                 if (error) {
@@ -255,13 +349,150 @@ router.post('/admin/send-email', function (req, res) {
                   res.status(200).json({
                     code: 200,
                     message: 'Data inserted successfully',
-                    data: results[0]
+                    data: [results[0],info]
                   });
                 }
               });
             }
           })
 });
+
+
+// GET REQUESTS
+router.get('/admin/job/:id', function (req, res) {
+  client.query(
+    `SELECT * FROM jobpostings WHERE JobID = ${req.params.id} `,
+    (err, result) => {
+      if (err) {
+        res.status(500).json({
+          code: "FAILED",
+          message: 'Error occurred while fetching data from the database',
+          error: err
+        });
+      } else {
+        res.status(200).json(result)
+      //   if (result && typeof result === 'object' && result.length > 0) {
+      //     const userEntry = [...result.entries()].find(([index, user]) => user.Email === req.body.email);
+          
+      //     if (userEntry) {
+      //         const [index, user] = userEntry;
+      //         if (user.Password === req.body.password) {
+      //             res.status(200).json({
+      //                 code: "SUCCESS",
+      //                 message: "You have successfully logged in.",
+      //                 data: user
+      //             });
+      //             return;
+      //         } else {
+      //             res.status(401).json({
+      //                 code: "UNAUTHORIZED ACCESS",
+      //                 message: "Incorrect password",
+      //                 data: ""
+      //             });
+      //             return;
+      //         }
+      //     } else {
+      //         res.status(404).json({
+      //             code: "USER NOT FOUND",
+      //             message: "Unable to authenticate. Please check your credentials.",
+      //             data: ""
+      //         });
+      //         return;
+      //     }
+      // }
+      }
+    }
+  );
+});
+
+router.get('/admin/job', function (req, res) {
+  client.query(
+    `SELECT * FROM jobpostings`,
+    (err, result) => {
+      if (err) {
+        res.status(500).json({
+          code: "FAILED",
+          message: 'Error occurred while fetching data from the database',
+          error: err
+        });
+      } else {
+        res.status(200).json(result)
+      }
+    }
+  );
+});
+
+router.get('/admin/get-recruiter/:id', function (req, res) {
+  client.query(
+    `SELECT * FROM Recruiters WHERE RecruiterID = ${req.params.id}`,
+    (err, result) => {
+      if (err) {
+        res.status(500).json({
+          code: "FAILED",
+          message: 'Error occurred while fetching data from the database',
+          error: err
+        });
+      } else {
+        res.status(200).json(result)
+      }
+    }
+  );
+});
+
+router.get('/admin/get-recruiters', function (req, res) {
+  client.query(
+    `SELECT * FROM Recruiters`,
+    (err, result) => {
+      if (err) {
+        res.status(500).json({
+          code: "FAILED",
+          message: 'Error occurred while fetching data from the database',
+          error: err
+        });
+      } else {
+        res.status(200).json(result)
+      }
+    }
+  );
+});
+
+router.get('/admin/get-application/:id', function (req, res) {
+  client.query(
+    `SELECT * FROM applications WHERE ApplicationID = ${req.params.id}`,
+    (err, result) => {
+      if (err) {
+        res.status(500).json({
+          code: "FAILED",
+          message: 'Error occurred while fetching data from the database',
+          error: err
+        });
+      } else {
+        res.status(200).json(result)
+      }
+    }
+  );
+});
+
+router.get('/admin/get-applications', function (req, res) {
+  client.query(
+    `SELECT * FROM applications`,
+    (err, result) => {
+      if (err) {
+        res.status(500).json({
+          code: "FAILED",
+          message: 'Error occurred while fetching data from the database',
+          error: err
+        });
+      } else {
+        res.status(200).json(result)
+      }
+    }
+  );
+});
+
+
+
+
 
 const EducationKeywords = [
   'school', 'students', 'school', 'Assessment', 'experience',
