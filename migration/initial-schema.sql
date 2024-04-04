@@ -55,9 +55,9 @@ CREATE TABLE Emails (
     ApplicantID INT,
     Subject VARCHAR(255),
     Text TEXT,
-    FOREIGN KEY (JobID) REFERENCES jobpostings(JobID),
-    FOREIGN KEY (RecruiterID) REFERENCES jobpostings(JobID),
-    FOREIGN KEY (ApplicantID) REFERENCES applicants(ApplicantID)
+    FOREIGN KEY (JobID) REFERENCES JobPostings(JobID),
+    FOREIGN KEY (RecruiterID) REFERENCES Recruiters(RecruiterID),
+    FOREIGN KEY (ApplicantID) REFERENCES Applicants(ApplicantID)
 );
 
 CREATE TABLE Applications (
@@ -67,8 +67,8 @@ CREATE TABLE Applications (
     ApplicationDate DATE,
     Email INT,
     Status ENUM('Submitted', 'Under Review', 'Rejected', 'Shortlisted', 'Hired'),
-    FOREIGN KEY (JobID) REFERENCES jobpostings(JobID),
-    FOREIGN KEY (Email) REFERENCES emails(EmailID),
-    FOREIGN KEY (ApplicantID) REFERENCES applicants(ApplicantID)
+    FOREIGN KEY (JobID) REFERENCES JobPostings(JobID),
+    FOREIGN KEY (Email) REFERENCES Emails(EmailID),
+    FOREIGN KEY (ApplicantID) REFERENCES Applicants(ApplicantID)
 );
 
