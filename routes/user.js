@@ -509,7 +509,7 @@ router.delete('/admin/job/:id', function (req, res) {
   );
 });
 
-router.delete('/admin/get-recruiter/:id', function (req, res) {
+router.delete('/admin/delete-recruiter/:id', function (req, res) {
   client.query(
     `DELETE * FROM Recruiters WHERE RecruiterID = ${req.params.id}`,
     (err, result) => {
@@ -526,7 +526,7 @@ router.delete('/admin/get-recruiter/:id', function (req, res) {
   );
 });
 
-router.delete('/admin/get-application/:id', function (req, res) {
+router.delete('/admin/delete-application/:id', function (req, res) {
   client.query(
     `DELETE * FROM applications WHERE ApplicationID = ${req.params.id}`,
     (err, result) => {
