@@ -491,8 +491,57 @@ router.get('/admin/get-applications', function (req, res) {
 });
 
 
+// DELETE REQUESTS
+router.delete('/admin/job/:id', function (req, res) {
+  client.query(
+    `DELETE * FROM jobpostings WHERE JobID = ${req.params.id} `,
+    (err, result) => {
+      if (err) {
+        res.status(500).json({
+          code: "FAILED",
+          message: 'Error occurred while deleting data from the database',
+          error: err
+        });
+      } else {
+        res.status(200).json(result)
+      }
+    }
+  );
+});
 
+router.delete('/admin/get-recruiter/:id', function (req, res) {
+  client.query(
+    `DELETE * FROM Recruiters WHERE RecruiterID = ${req.params.id}`,
+    (err, result) => {
+      if (err) {
+        res.status(500).json({
+          code: "FAILED",
+          message: 'Error occurred while fetching data from the database',
+          error: err
+        });
+      } else {
+        res.status(200).json(result)
+      }
+    }
+  );
+});
 
+router.delete('/admin/get-application/:id', function (req, res) {
+  client.query(
+    `DELETE * FROM applications WHERE ApplicationID = ${req.params.id}`,
+    (err, result) => {
+      if (err) {
+        res.status(500).json({
+          code: "FAILED",
+          message: 'Error occurred while fetching data from the database',
+          error: err
+        });
+      } else {
+        res.status(200).json(result)
+      }
+    }
+  );
+});
 
 const EducationKeywords = [
   'school', 'students', 'school', 'Assessment', 'experience',
