@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "start": "nodemon ./bin/www"
+    "start": "nodemon --env-file=.env ./bin/www "
   },
   "dependencies": {
     "@emailjs/browser": "^4.3.3",
