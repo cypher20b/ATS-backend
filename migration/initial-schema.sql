@@ -3,7 +3,7 @@ CREATE TABLE Applicants (
     ApplicantID INT AUTO_INCREMENT PRIMARY KEY,
     FirstName VARCHAR(255) NOT NULL,
     LastName VARCHAR(255) NOT NULL,
-    Email VARCHAR(255) UNIQUE,
+    Email VARCHAR(255),
     Phone VARCHAR(20),
     Resume TEXT,
     CoverLetter TEXT
@@ -65,10 +65,10 @@ CREATE TABLE Applications (
     JobID INT UNIQUE,
     ApplicantID INT UNIQUE,
     ApplicationDate DATE,
-    Email INT,
+    Email VARCHAR(255),
+    CVScore VARCHAR(10),
     Status ENUM('Submitted', 'Under Review', 'Rejected', 'Shortlisted', 'Hired'),
     FOREIGN KEY (JobID) REFERENCES JobPostings(JobID),
-    FOREIGN KEY (Email) REFERENCES Emails(EmailID),
     FOREIGN KEY (ApplicantID) REFERENCES Applicants(ApplicantID)
 );
 
