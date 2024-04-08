@@ -7,11 +7,10 @@ const nodemailer = require('nodemailer');
 const mysql = require('mysql2');
 
 const client =mysql.createConnection({
-  host     : 'localhost',
-  user     : 'verony_ats',
-  password : 'Amalitech in 2024',
-  database : 'verony_ATSDB'
-
+  host     : process.env.HOST,
+  user     : process.env.USER,
+  // password : process.env.PWD,
+  database : process.env.DB
 });
 client.connect(function(err) {
   if (err) {
@@ -22,7 +21,7 @@ client.connect(function(err) {
   console.log('connected as to database ');
 });
 router.post('/admin/post-job', function (req, res) {
-  client.query(`INSERT INTO jobpostings (Title, Description, Company, Location, Category, EmploymentType, Salary, Requirements,Responsibilities, PostedDate, ExpiryDate, ContactEmail,ContactPhone,IsActive)
+  client.query(`INSERT INTO JobPostings (Title, Description, Company, Location, Category, EmploymentType, Salary, Requirements,Responsibilities, PostedDate, ExpiryDate, ContactEmail,ContactPhone,IsActive)
   VALUES ('${req.body.Title}','${req.body.Description}','${req.body.Company}', '${req.body.Location}','${req.body.Category}','${req.body.EmploymentType}', '${req.body.Salary}','${req.body.Requirements}',
           '${req.body.Responsibilities}', '${req.body.PostedDate}','${req.body.ExpiryDate}', '${req.body.ContactEmail}','${req.body.ContactPhone}', '${req.body.IsActive}');
           `,
@@ -37,7 +36,7 @@ router.post('/admin/post-job', function (req, res) {
               console.log(result.insertId)
               const insertedId = result.insertId; // Get the ID of the inserted row
               client.query(
-                `SELECT * FROM jobpostings WHERE JobID = ${result.insertId}`,
+                `SELECT * FROM JobPostings WHERE JobID = ${result.insertId}`,
                 (err, results) => {
                   if (err) {
                     res.status(500).json({
@@ -60,7 +59,7 @@ router.post('/admin/post-job', function (req, res) {
 })
 
 router.patch('/admin/post-job/:id', function (req, res) {
-  client.query(`UPDATE jobpostings
+  client.query(`UPDATE JobPostings
       SET Title = '${req.body.Title}',
       Description = '${req.body.Description}',
       Company = '${req.body.Company}',
@@ -87,7 +86,7 @@ router.patch('/admin/post-job/:id', function (req, res) {
               console.log(result.insertId)
               const insertedId = result.insertId; // Get the ID of the inserted row
               client.query(
-                `SELECT * FROM jobpostings WHERE JobID = ${req.params.id}`,
+                `SELECT * FROM JobPostings WHERE JobID = ${req.params.id}`,
                 (err, results) => {
                   if (err) {
                     res.status(500).json({
@@ -239,7 +238,7 @@ router.post('/admin/login', function (req, res) {
 
 router.post('/admin/single-job-application', function (req, res) {
   client.query(
-    `REPLACE INTO applications (JobID, ApplicantID, ApplicationDate, Status)
+    `REPLACE INTO Applications (JobID, ApplicantID, ApplicationDate, Status)
     VALUES (?, ?, ?, ?)`,
     [req.body.JobID, req.body.ApplicantID, req.body.ApplicationDate, req.body.Status],
     (err, result) => {
@@ -253,7 +252,7 @@ router.post('/admin/single-job-application', function (req, res) {
         console.log(result.insertId)
         const insertedId = result.insertId; // Get the ID of the inserted row
         client.query(
-          `SELECT * FROM applications WHERE ApplicationID = ${result.insertId}`,
+          `SELECT * FROM Applications WHERE ApplicationID = ${result.insertId}`,
           (err, results) => {
             if (err) {
               res.status(500).json({
@@ -322,7 +321,7 @@ router.post('/admin/send-email', function (req, res) {
     }
   });
   
-  client.query( `SELECT * FROM applicants WHERE ApplicantID = ${req.body.ApplicantID}`,
+  client.query( `SELECT * FROM Applicants WHERE ApplicantID = ${req.body.ApplicantID}`,
           (err, results) => {
             console.log(req.body.Subject, results[0].Email)
 
@@ -361,7 +360,7 @@ router.post('/admin/send-email', function (req, res) {
 // GET REQUESTS
 router.get('/admin/job/:id', function (req, res) {
   client.query(
-    `SELECT * FROM jobpostings WHERE JobID = ${req.params.id} `,
+    `SELECT * FROM JobPostings WHERE JobID = ${req.params.id} `,
     (err, result) => {
       if (err) {
         res.status(500).json({
@@ -370,36 +369,11 @@ router.get('/admin/job/:id', function (req, res) {
           error: err
         });
       } else {
-        res.status(200).json(result)
-      //   if (result && typeof result === 'object' && result.length > 0) {
-      //     const userEntry = [...result.entries()].find(([index, user]) => user.Email === req.body.email);
-          
-      //     if (userEntry) {
-      //         const [index, user] = userEntry;
-      //         if (user.Password === req.body.password) {
-      //             res.status(200).json({
-      //                 code: "SUCCESS",
-      //                 message: "You have successfully logged in.",
-      //                 data: user
-      //             });
-      //             return;
-      //         } else {
-      //             res.status(401).json({
-      //                 code: "UNAUTHORIZED ACCESS",
-      //                 message: "Incorrect password",
-      //                 data: ""
-      //             });
-      //             return;
-      //         }
-      //     } else {
-      //         res.status(404).json({
-      //             code: "USER NOT FOUND",
-      //             message: "Unable to authenticate. Please check your credentials.",
-      //             data: ""
-      //         });
-      //         return;
-      //     }
-      // }
+        res.status(200).json({
+          code: "SUCCESS",
+          message: '',
+          data: result
+        })
       }
     }
   );
@@ -407,7 +381,7 @@ router.get('/admin/job/:id', function (req, res) {
 
 router.get('/admin/job', function (req, res) {
   client.query(
-    `SELECT * FROM jobpostings`,
+    `SELECT * FROM JobPostings`,
     (err, result) => {
       if (err) {
         res.status(500).json({
@@ -416,7 +390,11 @@ router.get('/admin/job', function (req, res) {
           error: err
         });
       } else {
-        res.status(200).json(result)
+        res.status(200).json({
+          code: "SUCCESS",
+          message: '',
+          data: result
+        })
       }
     }
   );
@@ -433,7 +411,11 @@ router.get('/admin/get-recruiter/:id', function (req, res) {
           error: err
         });
       } else {
-        res.status(200).json(result)
+        res.status(200).json({
+          code: "SUCCESS",
+          message: '',
+          data: result
+        })
       }
     }
   );
@@ -450,7 +432,11 @@ router.get('/admin/get-recruiters', function (req, res) {
           error: err
         });
       } else {
-        res.status(200).json(result)
+        res.status(200).json({
+          code: "SUCCESS",
+          message: '',
+          data: result
+        })
       }
     }
   );
@@ -458,7 +444,7 @@ router.get('/admin/get-recruiters', function (req, res) {
 
 router.get('/admin/get-application/:id', function (req, res) {
   client.query(
-    `SELECT * FROM applications WHERE ApplicationID = ${req.params.id}`,
+    `SELECT * FROM Applications WHERE ApplicationID = ${req.params.id}`,
     (err, result) => {
       if (err) {
         res.status(500).json({
@@ -467,7 +453,11 @@ router.get('/admin/get-application/:id', function (req, res) {
           error: err
         });
       } else {
-        res.status(200).json(result)
+        res.status(200).json({
+          code: "SUCCESS",
+          message: '',
+          data: result
+        })
       }
     }
   );
@@ -475,7 +465,7 @@ router.get('/admin/get-application/:id', function (req, res) {
 
 router.get('/admin/get-applications', function (req, res) {
   client.query(
-    `SELECT * FROM applications`,
+    `SELECT * FROM Applications`,
     (err, result) => {
       if (err) {
         res.status(500).json({
@@ -484,7 +474,11 @@ router.get('/admin/get-applications', function (req, res) {
           error: err
         });
       } else {
-        res.status(200).json(result)
+        res.status(200).json({
+          code: "SUCCESS",
+          message: '',
+          data: result
+        })
       }
     }
   );
@@ -494,7 +488,7 @@ router.get('/admin/get-applications', function (req, res) {
 // DELETE REQUESTS
 router.delete('/admin/job/:id', function (req, res) {
   client.query(
-    `DELETE * FROM jobpostings WHERE JobID = ${req.params.id} `,
+    `DELETE * FROM JobPostings WHERE JobID = ${req.params.id} `,
     (err, result) => {
       if (err) {
         res.status(500).json({
@@ -503,7 +497,11 @@ router.delete('/admin/job/:id', function (req, res) {
           error: err
         });
       } else {
-        res.status(200).json(result)
+        res.status(200).json({
+          code: "SUCCESS",
+          message: `Job with ID=${req.params.id} has been successfully deleted`,
+          data: 'Deleted'
+          })
       }
     }
   );
@@ -520,7 +518,11 @@ router.delete('/admin/delete-recruiter/:id', function (req, res) {
           error: err
         });
       } else {
-        res.status(200).json(result)
+        res.status(200).json({
+          code: "SUCCESS",
+          message: `User with ID=${req.params.id} has been successfully deleted`,
+          data: 'Deleted'
+          })
       }
     }
   );
@@ -528,7 +530,7 @@ router.delete('/admin/delete-recruiter/:id', function (req, res) {
 
 router.delete('/admin/delete-application/:id', function (req, res) {
   client.query(
-    `DELETE * FROM applications WHERE ApplicationID = ${req.params.id}`,
+    `DELETE * FROM Applications WHERE ApplicationID = ${req.params.id}`,
     (err, result) => {
       if (err) {
         res.status(500).json({
@@ -537,7 +539,11 @@ router.delete('/admin/delete-application/:id', function (req, res) {
           error: err
         });
       } else {
-        res.status(200).json(result)
+        res.status(200).json({
+          code: "SUCCESS",
+          message: `Job application ${req.params.id} has been successfully deleted`,
+          data: 'Deleted'
+          })
       }
     }
   );
