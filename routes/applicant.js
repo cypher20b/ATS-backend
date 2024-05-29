@@ -15,10 +15,10 @@ const storage = multer.diskStorage({
 })
 const upload = multer({ storage: storage })
 const client =mysql.createConnection({
-  host     : process.env.HOST,
-  user     : process.env.USER,
-  password : process.env.PWD,
-  database : process.env.DB
+  host     : process.env.DBHOST,
+  user     : process.env.DBUSER,
+  password : process.env.DBPWD,
+  database : process.env.DBNAME
 });
 router.get('/', function(req, res, next) {
   res.render('index', { title: 'Express on Applicants route' });

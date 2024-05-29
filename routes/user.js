@@ -7,14 +7,14 @@ const nodemailer = require('nodemailer');
 const mysql = require('mysql2');
 
 const client =mysql.createConnection({
-  host     : process.env.HOST,
-  user     : process.env.USER,
-  password : process.env.PWD,
-  database : process.env.DB
+  host     : process.env.DBHOST,
+  user     : process.env.DBUSER,
+  password : process.env.DBPWD,
+  database : process.env.DBNAME
 });
 client.connect(function(err) {
   if (err) {
-    console.error('error connecting: ' + err.stack);
+    console.error('user error connecting: ' + err);
     return;
   }
  

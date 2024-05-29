@@ -7,7 +7,7 @@
 var app = require('../app');
 var debug = require('debug')('newexpressserver:server');
 var http = require('http');
-var port = normalizePort(process.env.PORT);
+var port = normalizePort(process.env.BEPORT);
 app.set('port', port);
 var server = http.createServer(app);
 server.listen(port, '0.0.0.0',()=>{
